@@ -1,28 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
+
 
 //create your first component
-const Home = () => {
-	return (
-		<div className="text-center">
-            
+const TodoList = () => {
+	const [task,setTasks] = useState([]);
+	const [newTask, setNewTask] = ("");
 
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
+	const userName = "Fabio"
+
+	useEffect(()=>{
+		fetch(`https://playground.4geeks.com/apis/fake/todos/user/${userName}`)
+		.then( res => res.json())
+		.then(data =>{setTasks(data)})
+		.catch((error) => console.log("error al cargar la consola",error))
+	},[]);
+
+	const addTask = () => {
+		if (newTask.trim() === "") return;
+
+		const updatedTasks = [...task, {label: newTask, done: false}];
+
+		fetch(`https://playground.4geeks.com/apis/fake/todos/user/${userName}`,{
+			method: "PUT",
+			body: JSON.stringify(updatedTasks),
+			headers:{
+				"content-Type": "application/json"
+			}
+		})
+	}
+
+	return (
+		<div className="container">
+			<h1>to Do list </h1>
+			<input value={newTask} onChange={(e)=> setNewTask(e.target.value)} placeholder="Agrega nueva tarea" />
+			<button onClick={addTask}></button>
 		</div>
+		
 	);
 };
 
-export default Home;
+export default TodoList;
